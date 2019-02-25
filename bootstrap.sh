@@ -1,38 +1,31 @@
 #!/bin/bash
 ############################
-# .bootstrap.sh
-# This script creates symlinks from the home directory to any desired dotfiles in ${homedir}/dotfiles
+# .make.sh
+# This script creates symlinks from the home directory to any desired dotfiles in ~/dotfiles
 ############################
 
 ########## Variables
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: install.sh <home_directory>"
-    exit 1
-fi
-
-homedir=$1
-
-# dotfiles directory
-dotfiledir=${homedir}/dotfiles
-
-# list of files/folders to symlink in ${homedir}
-files="bash_profile bashrc bash_prompt aliases private"
+dir=~/dotfiles                    # dotfiles directory
+olddir=~/dotfiles_old             # old dotfiles backup directory
+files="bashrc vimrc vim zshrc oh-my-zsh private scrotwm.conf Xresources"    # list of files/folders to symlink in homedir
 
 ##########
 
-curl "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash" > ${homedir}/.git-completion.bash
+# create dotfiles_old in homedir
+echo -n "Creating $olddir for backup of any existing dotfiles in ~ ..."
+mkdir -p $olddir
+echo "done"
 
 # change to the dotfiles directory
-echo "Changing to the ${dotfiledir} directory"
-cd ${dotfiledir}
-echo "...done"
+echo -n "Changing to the $dir directory ..."
+cd $dir
+echo "done"
 
-# create symlinks (will overwrite old dotfiles)
-for file in ${files}; do
+# move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks from the homedir to any files in the ~/dotfiles directory specified in $files
+for file in $files; do
+    echo "Moving any existing dotfiles from ~ to $olddir"
+    mv ~/.$file ~/dotfiles_old/
     echo "Creating symlink to $file in home directory."
-    ln -sf ${dotfiledir}/.${file} ${homedir}/.${file}
+    ln -s $dir/$file ~/.$file
 done
-
-# Run the Homebrew Script
-# ./brew.sh

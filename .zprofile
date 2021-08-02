@@ -1,0 +1,1 @@
+/Users/janneylinen/.zprezto/runcoms/zprofile
